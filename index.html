@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task List</title>
+    <!-- Bootstrap CSS CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <!-- Bootstrap Icons CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <style>
+      body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+        font-size: 1.25rem;
+        min-height: 100vh;
+      }
+      .navbar-3d {
+        text-shadow:
+          1px 1px 2px #888,
+          2px 2px 4px #ccc,
+          0 2px 8px #fff;
+        color: #4b0082 !important;
+      }
+      .task-list-container {
+        max-width: 600px;
+        margin: 4em auto 6em auto;
+      }
+      .task-list-footer {
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        z-index: 100;
+      }
+      .card {
+        border-radius: 1.5rem;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      }
+      .form-control {
+        font-size: 1.2rem;
+        padding: 0.75rem 1rem;
+      }
+      .btn-primary {
+        font-size: 1.2rem;
+        padding: 0.75rem 2rem;
+        border-radius: 2rem;
+      }
+      .list-group-item {
+        font-size: 1.15rem;
+        border-radius: 1rem !important;
+        margin-bottom: 0.5rem;
+        background: #f1f5f9;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      }
+      .btn-danger {
+        border-radius: 1rem;
+        font-size: 1.1rem;
+        padding: 0.4rem 1.2rem;
+      }
+      .btn-check {
+        border-radius: 1rem;
+        font-size: 1.1rem;
+        padding: 0.4rem 1.2rem;
+        margin-right: 1rem;
+      }
+      .navbar-brand {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+      .bi {
+        vertical-align: -.125em;
+      }
+      @media (max-width: 600px) {
+        .task-list-container {
+          margin: 1em 0 6em 0;
+          padding: 0.5em;
+        }
+        .navbar-brand {
+          font-size: 1.3rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Auth Forms -->
+    <div id="auth-container" class="d-flex flex-column align-items-center justify-content-center" style="min-height: 80vh;">
+      <div id="login-form" class="card shadow p-4 mb-3" style="max-width: 400px; display: none;">
+        <h3 class="mb-3 text-center">Login</h3>
+        <form>
+          <div class="mb-3">
+            <input type="text" id="login-username" class="form-control" placeholder="Username" required />
+          </div>
+          <div class="mb-3">
+            <input type="password" id="login-password" class="form-control" placeholder="Password" required />
+          </div>
+          <button type="submit" class="btn btn-primary w-100 mb-2">Login</button>
+        </form>
+        <div class="text-center">
+          <small>Don't have an account? <a href="#" id="show-register">Register</a></small>
+        </div>
+        <div id="login-error" class="text-danger mt-2" style="display:none;"></div>
+      </div>
+      <div id="register-form" class="card shadow p-4" style="max-width: 400px; display: none;">
+        <h3 class="mb-3 text-center">Register</h3>
+        <form>
+          <div class="mb-3">
+            <input type="text" id="register-username" class="form-control" placeholder="Username" required />
+          </div>
+          <div class="mb-3">
+            <input type="password" id="register-password" class="form-control" placeholder="Password" required />
+          </div>
+          <button type="submit" class="btn btn-success w-100 mb-2">Create Account</button>
+        </form>
+        <div class="text-center">
+          <small>Already have an account? <a href="#" id="show-login">Login</a></small>
+        </div>
+        <div id="register-error" class="text-danger mt-2" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- Purple Banner Behind Navbar -->
+    <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 64px; background: #e0d7fa; z-index: -1;"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-transparent shadow position-relative" style="z-index: 1;">
+      <div class="container d-flex align-items-center justify-content-between position-relative">
+        <div class="d-flex align-items-center gap-3">
+          <a class="navbar-brand d-flex align-items-center gap-2 mb-0 navbar-3d" href="#">
+            <i class="bi bi-check2-square"></i> Task List
+          </a>
+          <a class="nav-link d-flex align-items-center gap-1 navbar-3d" href="#">
+            <i class="bi bi-house-door"></i> Home
+          </a>
+          <a class="nav-link d-flex align-items-center gap-1 navbar-3d" href="#">
+            <i class="bi bi-info-circle"></i> About
+          </a>
+        </div>
+        <div id="user-info" class="d-flex align-items-center gap-2" style="display:none;">
+          <span id="current-user" class="fw-bold"></span>
+          <button id="logout-btn" class="btn btn-outline-secondary btn-sm">Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Card -->
+    <main class="task-list-container">
+      <div class="card shadow-lg p-4">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">
+            <i class="bi bi-list-task text-primary"></i> My Tasks
+          </h2>
+          <form id="task-form" class="d-flex gap-3 mb-4">
+            <input
+              type="text"
+              id="task-input"
+              class="form-control shadow-sm"
+              placeholder="Add a new task..."
+              required
+            />
+            <button type="submit" class="btn btn-primary shadow d-flex align-items-center gap-2">
+              <i class="bi bi-plus-circle"></i> Add
+            </button>
+          </form>
+          <ul id="task-list" class="list-group"></ul>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white text-center py-3 task-list-footer shadow-lg">
+      &copy; 2025 <i class="bi bi-check2-square"></i> Task List App. All rights reserved.
+    </footer>
+
+    <!-- Bootstrap JS Bundle CDN (for optional JS components) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ENjdO4Dr2bkBIFxQpeoA6DQD1KQ2aQF6z9OmGNYD5t9UJ0ZB+Uu60y5Pp6Uib2vs"
+      crossorigin="anonymous"></script>
+    <script src="auth.js"></script>
+    <script>
+      const form = document.getElementById('task-form');
+      const input = document.getElementById('task-input');
+      const list = document.getElementById('task-list');
+
+      // Load tasks from localStorage
+      function loadTasks() {
+        const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        tasks.forEach(task => addTaskToDOM(task.text, task.completed));
+      }
+
+      // Save tasks to localStorage
+      function saveTasks() {
+        const tasks = [];
+        list.querySelectorAll('li').forEach(li => {
+          const text = li.querySelector('span').textContent;
+          const completed = li.querySelector('span').style.textDecoration === 'line-through';
+          tasks.push({ text, completed });
+        });
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      }
+
+      function addTaskToDOM(taskText, completed = false) {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center shadow-sm';
+
+        // Task text
+        const taskSpan = document.createElement('span');
+        taskSpan.textContent = taskText;
+        taskSpan.className = 'flex-grow-1';
+        if (completed) {
+          taskSpan.style.textDecoration = 'line-through';
+          taskSpan.style.opacity = '0.5';
+        }
+
+        // Complete button (icon only)
+        const checkBtn = document.createElement('button');
+        checkBtn.className = 'btn btn-success btn-check me-3 d-flex align-items-center';
+        checkBtn.innerHTML = '<i class="bi bi-check-circle"></i>';
+        checkBtn.title = "Mark as done";
+        checkBtn.onclick = function () {
+          if (taskSpan.style.textDecoration === 'line-through') {
+            taskSpan.style.textDecoration = '';
+            taskSpan.style.opacity = '1';
+          } else {
+            taskSpan.style.textDecoration = 'line-through';
+            taskSpan.style.opacity = '0.5';
+          }
+          saveTasks();
+        };
+
+        // Remove button (icon only)
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-danger btn-sm ms-4 d-flex align-items-center';
+        removeBtn.innerHTML = '<i class="bi bi-trash"></i>';
+        removeBtn.title = "Remove task";
+        removeBtn.onclick = function () {
+          list.removeChild(li);
+          saveTasks();
+        };
+
+        li.appendChild(taskSpan);
+        li.appendChild(checkBtn);
+        li.appendChild(removeBtn);
+        list.appendChild(li);
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const taskText = input.value.trim();
+        if (taskText === '') return;
+        addTaskToDOM(taskText);
+        saveTasks();
+        input.value = '';
+        input.focus();
+      });
+
+      // Load tasks on page load
+      window.addEventListener('DOMContentLoaded', loadTasks);
+    </script>
+  </body>
+</html>
